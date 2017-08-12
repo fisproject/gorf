@@ -19,13 +19,15 @@ func NewTree(f Criterion, depth int) *Tree {
 	return t
 }
 
+// Build a tree.
 func (t *Tree) Build(features [][]float64, labels []float64) {
-	t.Root.Grow(features, labels, t.CriterionFunc)
+	t.Root.Add(features, labels, t.CriterionFunc)
 }
 
+// Prediction by base learner.
 func (t *Tree) Predict(feature []float64) float64 {
 	return t.Root.Predict(feature)
 }
 
-// TODO: imple prune tree
+// TODO: Imple prune tree
 func (t *Tree) Prune() {}

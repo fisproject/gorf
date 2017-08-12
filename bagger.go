@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Bagging is a parallel ensemble methods.
 type Bagger struct {
 	task string
 }
@@ -15,6 +16,7 @@ func NewBagger(task string) *Bagger {
 	return bagger
 }
 
+// Get a subset to train the base learner.
 func (b *Bagger) BootstrapSampling(features [][]float64, labels []float64) (subsamplesF [][]float64, subsamplesL []float64) {
 	rand.Seed(time.Now().UnixNano())
 	n := len(features)
@@ -33,6 +35,7 @@ func (b *Bagger) BootstrapSampling(features [][]float64, labels []float64) (subs
 	return subsamplesF, subsamplesL
 }
 
+// Aggregate the output of the base learner.
 func (b *Bagger) Aggregate(predictions []float64) float64 {
 	switch b.task {
 	case "regression", "r":
@@ -44,6 +47,7 @@ func (b *Bagger) Aggregate(predictions []float64) float64 {
 	}
 }
 
+// Voting for classification.
 func (b *Bagger) vote(predictions []float64) (prediction float64) {
 	uniq := unique(predictions)
 	cnt := 0
@@ -56,6 +60,7 @@ func (b *Bagger) vote(predictions []float64) (prediction float64) {
 	return prediction
 }
 
+// Averaging for regression.
 func (b *Bagger) average(predictions []float64) float64 {
 	sum := 0.0
 	for _, v := range predictions {

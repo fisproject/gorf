@@ -23,12 +23,13 @@ func NewNode() *Node {
 	return n
 }
 
-func (n *Node) Grow(features [][]float64, labels []float64, fun Criterion) {
+// Add the node of the tree.
+func (n *Node) Add(features [][]float64, labels []float64, fun Criterion) {
 	uniq := unique(labels)
 	size := len(features)
 	featureN := len(features[0])
 
-	// 全データが同一クラスの場合は終了
+	// if all data are in one class, exit.
 	if len(uniq) == 1 {
 		n.label = labels[0]
 		return
@@ -36,7 +37,8 @@ func (n *Node) Grow(features [][]float64, labels []float64, fun Criterion) {
 
 	selectedFeatures := selectRandomFeatures(featureN, 2)
 
-	if len(features) == 0 {
+  // if a features set is empty, exit.
+	if len(features[0]) == 0 {
 		return
 	}
 
@@ -77,13 +79,14 @@ func (n *Node) Grow(features [][]float64, labels []float64, fun Criterion) {
 
 	n.left = NewNode()
 	n.left.depth = n.depth + 1
-	n.left.Grow(lhs, lhsl, fun)
+	n.left.Add(lhs, lhsl, fun)
 
 	n.right = NewNode()
 	n.right.depth = n.depth + 1
-	n.right.Grow(rhs, rhsl, fun)
+	n.right.Add(rhs, rhsl, fun)
 }
 
+// Get label at node.
 func (n *Node) getNodeLabel(labels []float64) {
 	uniq := unique(labels)
 
@@ -96,6 +99,7 @@ func (n *Node) getNodeLabel(labels []float64) {
 	}
 }
 
+// Prediction by decision tree.
 func (n *Node) Predict(feature []float64) float64 {
 	if n.left != nil && n.right != nil {
 		if feature[n.feature] <= n.threshold {
@@ -108,6 +112,7 @@ func (n *Node) Predict(feature []float64) float64 {
 	return n.label
 }
 
+// Gini impurity. Used by the CART (classification and regression tree) algorithm.
 func gini(labels []float64) float64 {
 	n := len(labels)
 	classes := unique(labels)
@@ -126,8 +131,8 @@ func gini(labels []float64) float64 {
 	return gini
 }
 
+// Information gain. Used by the ID3, C4.5 and C5.0 tree-generation algorithms.
 func entropy() {}
 
-func error() {}
-
+// Mean Squared Error (MSE) for regression.
 func mse() {}

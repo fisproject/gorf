@@ -8,7 +8,7 @@ import (
 )
 
 type Forest struct {
-	K          int // features
+	K          int // k features
 	estimators int
 	maxDepth   int
 	Trees      []*Tree
@@ -25,16 +25,29 @@ func NewForest(task string, k, estimators, depth int) *Forest {
 	return f
 }
 
+// Build a forest of trees from the training set.
 func (f *Forest) Build(features [][]float64, labels []float64) *Forest {
 	f.Trees = make([]*Tree, f.estimators)
+	done := make(chan bool)
+
 	for i := 0; i < f.estimators; i++ {
-		f.Trees[i] = NewTree(gini, f.maxDepth)
-		subsamplesF, subsamplesL := f.bagger.BootstrapSampling(features, labels)
-		f.Trees[i].Build(subsamplesF, subsamplesL)
+		go func(n int) {
+			log.Printf("Buiding %vth tree...\n", n)
+			f.Trees[n] = NewTree(gini, f.maxDepth)
+			subsamplesF, subsamplesL := f.bagger.BootstrapSampling(features, labels)
+			f.Trees[n].Build(subsamplesF, subsamplesL)
+			done <- true
+		}(i)
 	}
+
+	for i := 1; i <= f.estimators; i++ {
+		<-done
+	}
+
 	return f
 }
 
+// Predict class for X.
 func (f *Forest) Predict(feature []float64) float64 {
 	predictions := []float64{}
 	for i := 0; i < f.estimators; i++ {
@@ -44,6 +57,7 @@ func (f *Forest) Predict(feature []float64) float64 {
 	return f.bagger.Aggregate(predictions)
 }
 
+// For each tree randomly select feature.
 func selectRandomFeatures(n int, k int) (selectedCol []int) {
 	rand.Seed(time.Now().UnixNano())
 

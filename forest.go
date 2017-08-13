@@ -34,8 +34,8 @@ func (f *Forest) Build(features [][]float64, labels []float64) *Forest {
 		go func(n int) {
 			log.Printf("Buiding %vth tree...\n", n)
 			f.Trees[n] = NewTree(gini, f.maxDepth)
-			subsamplesF, subsamplesL := f.bagger.BootstrapSampling(features, labels)
-			f.Trees[n].Build(subsamplesF, subsamplesL)
+			subFeatures, subLabels := f.bagger.BootstrapSampling(features, labels)
+			f.Trees[n].Build(subFeatures, subLabels)
 			done <- true
 		}(i)
 	}
@@ -53,12 +53,11 @@ func (f *Forest) Predict(feature []float64) float64 {
 	for i := 0; i < f.estimators; i++ {
 		predictions = append(predictions, f.Trees[i].Predict(feature))
 	}
-	log.Println(predictions)
 	return f.bagger.Aggregate(predictions)
 }
 
-// For each tree randomly select feature.
-func selectRandomFeatures(n int, k int) (selectedCol []int) {
+// Using a random selection of features.
+func selectRandomFeatures(n int, k int) (selected []int) {
 	rand.Seed(time.Now().UnixNano())
 
 	tmp := make([]int, n)
@@ -70,8 +69,8 @@ func selectRandomFeatures(n int, k int) (selectedCol []int) {
 		tmp[i], tmp[j] = tmp[j], tmp[i]
 	}
 
-	selectedCol = tmp[:k]
-	sort.Ints(selectedCol)
+	selected = tmp[:k]
+	sort.Ints(selected)
 
-	return selectedCol
+	return selected
 }

@@ -11,4 +11,4 @@ Simple Random Forest implemtation in Go.
 [MIT](http://opensource.org/licenses/MIT)
 
 ## Author
-[ttsy](https://github.com/fisproject)
+[t2sy](https://github.com/fisproject)

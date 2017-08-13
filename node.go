@@ -37,7 +37,7 @@ func (n *Node) Add(features [][]float64, labels []float64, fun Criterion) {
 
 	selectedFeatures := selectRandomFeatures(featureN, 2)
 
-  // if a features set is empty, exit.
+	// if a features set is empty, exit.
 	if len(features[0]) == 0 {
 		return
 	}

@@ -1,4 +1,4 @@
-package randomforest
+package gorf
 
 import (
 	"log"

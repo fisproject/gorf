@@ -1,4 +1,4 @@
-package randomforest
+package gorf
 
 import (
 	"math/rand"
@@ -11,9 +11,9 @@ type Bagger struct {
 }
 
 func NewBagger(task string) *Bagger {
-	bagger := &Bagger{}
-	bagger.task = task
-	return bagger
+	b := &Bagger{}
+	b.task = task
+	return b
 }
 
 // Get a subset to train the base learner.

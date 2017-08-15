@@ -1,4 +1,4 @@
-package randomforest
+package gorf
 
 import (
 	"log"
@@ -48,12 +48,15 @@ func (f *Forest) Build(features [][]float64, labels []float64) *Forest {
 }
 
 // Predict class for X.
-func (f *Forest) Predict(feature []float64) float64 {
-	predictions := []float64{}
-	for i := 0; i < f.estimators; i++ {
-		predictions = append(predictions, f.Trees[i].Predict(feature))
+func (f *Forest) Predict(features [][]float64) (predictions []float64) {
+	for _, v := range features {
+		tmp := []float64{}
+		for i := 0; i < f.estimators; i++ {
+			tmp = append(tmp, f.Trees[i].Predict(v))
+		}
+		predictions = append(predictions, f.bagger.Aggregate(tmp))
 	}
-	return f.bagger.Aggregate(predictions)
+	return predictions
 }
 
 // Using a random selection of features.

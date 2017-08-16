@@ -10,12 +10,20 @@ type Tree struct {
 
 type Criterion func(labels []float64) float64
 
-func NewTree(f Criterion, depth int) *Tree {
+func NewTree(task string, depth int) *Tree {
 	t := &Tree{}
 	t.Root = NewNode()
 	t.Root.depth = 0
 	t.maxDepth = depth
-	t.CriterionFunc = f
+
+	switch task {
+	case "regression", "mse":
+		t.CriterionFunc = mse
+	case "classification", "gini":
+		t.CriterionFunc = gini
+	default:
+		t.CriterionFunc = gini
+	}
 	return t
 }
 

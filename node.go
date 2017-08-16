@@ -135,4 +135,19 @@ func gini(labels []float64) float64 {
 func entropy() {}
 
 // Mean Squared Error (MSE) for regression.
-func mse() {}
+func mse(labels []float64) float64 {
+	n := len(labels)
+
+	sum := 0.0
+	for _, v := range labels {
+		sum += v
+	}
+	y := sum / float64(n)
+
+	squaredError := 0.0
+	for _, v := range labels {
+		squaredError += math.Pow(v-y, 2.0)
+	}
+
+	return squaredError / float64(n)
+}

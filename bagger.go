@@ -17,7 +17,7 @@ func NewBagger(task string) *Bagger {
 }
 
 // Get a subset to train the base learner.
-func (b *Bagger) BootstrapSampling(features [][]float64, labels []float64) (subsamplesF [][]float64, subsamplesL []float64) {
+func (b *Bagger) BootstrapSampling(features [][]float64, labels []float64) (subFeatures [][]float64, subLabels []float64) {
 	rand.Seed(time.Now().UnixNano())
 	n := len(features)
 	rnd := []int{}
@@ -28,19 +28,19 @@ func (b *Bagger) BootstrapSampling(features [][]float64, labels []float64) (subs
 	}
 
 	for _, v := range rnd {
-		subsamplesF = append(subsamplesF, features[v])
-		subsamplesL = append(subsamplesL, labels[v])
+		subFeatures = append(subFeatures, features[v])
+		subLabels = append(subLabels, labels[v])
 	}
 
-	return subsamplesF, subsamplesL
+	return subFeatures, subLabels
 }
 
 // Aggregate the output of the base learner.
 func (b *Bagger) Aggregate(predictions []float64) float64 {
 	switch b.task {
-	case "regression", "r":
+	case "regression", "mse":
 		return b.average(predictions)
-	case "classification", "c":
+	case "classification", "gini", "entropy":
 		return b.vote(predictions)
 	default:
 		return b.vote(predictions)

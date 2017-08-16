@@ -33,7 +33,7 @@ func (f *Forest) Build(features [][]float64, labels []float64) *Forest {
 	for i := 0; i < f.estimators; i++ {
 		go func(n int) {
 			log.Printf("Buiding %vth tree...\n", n)
-			f.Trees[n] = NewTree(gini, f.maxDepth)
+			f.Trees[n] = NewTree(f.bagger.task, f.maxDepth)
 			subFeatures, subLabels := f.bagger.BootstrapSampling(features, labels)
 			f.Trees[n].Build(subFeatures, subLabels)
 			done <- true

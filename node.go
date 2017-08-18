@@ -13,7 +13,7 @@ type Node struct {
 	label     float64
 	gain      float64
 	threshold float64
-	depth     float64
+	depth     int
 }
 
 func NewNode() *Node {
@@ -110,6 +110,23 @@ func (n *Node) Predict(feature []float64) float64 {
 	}
 
 	return n.label
+}
+
+// Prune a tree
+func (n *Node) Prune(maxDepth int) {
+	if n.left == nil && n.right == nil {
+		return
+	}
+
+	n.left.Prune(maxDepth)
+	n.right.Prune(maxDepth)
+
+	if n.depth >= maxDepth {
+		n.left = nil
+		n.right = nil
+		n.gain = 0.0
+		n.threshold = 0.0
+	}
 }
 
 // Gini impurity. Used by the CART (classification and regression tree) algorithm.

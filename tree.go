@@ -30,12 +30,12 @@ func NewTree(task string, depth int) *Tree {
 // Build a tree.
 func (t *Tree) Build(features [][]float64, labels []float64) {
 	t.Root.Add(features, labels, t.CriterionFunc)
+	if t.maxDepth > 0 {
+		t.Root.Prune(t.maxDepth)
+	}
 }
 
 // Prediction by base learner.
 func (t *Tree) Predict(feature []float64) float64 {
 	return t.Root.Predict(feature)
 }
-
-// TODO: Imple prune tree
-func (t *Tree) Prune() {}
